@@ -18,6 +18,12 @@ function App() {
     }
   };
 
+  const joinLobby = () => {
+    setRoom("lobby");
+    socket.emit('join_lobby', room);
+    setShowChat(true);
+  };
+  
 //   //skriva ut rum
 // socket.on ("list_of_rooms", (roomList) =>{
 //   console.log(roomList);
@@ -46,6 +52,7 @@ console.log(room);
             }}
           />
           <button onClick={joinRoom}>Join a room</button>
+          <button onClick={joinLobby}>Join Lobby</button>
         </div>
       ) : (
         <Chat socket={socket} username={username} room={room} />
@@ -56,3 +63,4 @@ console.log(room);
 }
 
 export default App;
+
