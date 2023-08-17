@@ -14,13 +14,16 @@ const io = new Server(server, {
   },
 });
 
+let activeRooms = []; // Array för att lagra aktiva rum
+
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
   socket.on("join_room", (data) => {
     socket.join(data);
+    activeRooms.push(data); // Lägger till det anslutna rummet i arrayen
+    io.emit("active_rooms", activeRooms); // Skicka listan över aktiva rum till alla anslutna klienter
     console.log(`User with ID: ${socket.id} joined room: ${data}`);
-    
   });
 
   socket.on("send_message", (data) => {
@@ -28,11 +31,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    activeRooms = activeRooms.filter((room) => {
+      return io.sockets.adapter.rooms.get(room)?.size > 0; // Ta bort rummet från listan om ingen är kvar i det
+    });
+    io.emit("active_rooms", activeRooms); // Skickar lista på aktiva rum till alla 
     console.log("User Disconnected", socket.id);
   });
 });
-
-
 
 server.listen(3001, () => {
   console.log("SERVER RUNNING");

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-// import ScrollToBottom from "react-scroll-to-bottom";
 
 function Chat({ socket, username, room }) {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
+  const [activeRooms, setActiveRooms] = useState([]); // 
 
   const sendMessage = async () => {
     if (currentMessage !== "") {
@@ -27,6 +27,20 @@ function Chat({ socket, username, room }) {
     socket.on("receive_message", (data) => {
       setMessageList((list) => [...list, data]);
     });
+
+   //
+    socket.on("active_rooms", (rooms) => {
+      setActiveRooms(rooms);
+    });
+
+    // 
+    socket.emit("get_active_rooms");
+
+    return () => {
+      // 
+      socket.off("receive_message");
+      socket.off("active_rooms");
+    };
   }, [socket]);
 
   return (
@@ -35,7 +49,6 @@ function Chat({ socket, username, room }) {
         <p>Live Chat</p>
       </div>
       <div className="chat-body">
-      {/* ScrollToBottom */}
         <div className="message-container">
           {messageList.map((messageContent) => {
             return (
@@ -73,7 +86,12 @@ function Chat({ socket, username, room }) {
       </div>
       <div>
         <p>Du är i rum: {room}</p>
-        <p>Alla aktiva rum: {room}</p>
+        <p>Alla aktiva rum:</p>
+        <ul>
+          {activeRooms.map((activeRoom) => (
+            <li key={activeRoom}>{activeRoom}</li>
+          ))}
+        </ul>
       </div>
     </div>
   );
