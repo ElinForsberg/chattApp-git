@@ -34,7 +34,15 @@ io.on("connection", (socket) => {
   socket.on("send_message", (data) => {
     socket.to(data.room).emit("receive_message", data);
   });
-
+  
+  socket.on("typing", (username) => {
+    socket.broadcast.emit("typing", username);
+  });
+  
+  socket.on("not_typing", (username) => {
+    socket.broadcast.emit("not_typing", username);
+  });
+  
   socket.on("disconnect", () => {
     console.log("User Disconnected", socket.id);
   });
