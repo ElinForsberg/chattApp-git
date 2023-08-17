@@ -23,6 +23,14 @@ io.on("connection", (socket) => {
     
   });
 
+  socket.on("join_lobby", (data) => {
+    const roomLobby = "lobby"
+    socket.join(roomLobby);
+    console.log(`User with ID: ${socket.id} joined room: ${roomLobby}`);
+    
+  });
+
+
   socket.on("send_message", (data) => {
     socket.to(data.room).emit("receive_message", data);
   });
