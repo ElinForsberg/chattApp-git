@@ -189,3 +189,6 @@ body {
 .hide {
   opacity: 0 !important;
 }
+.feedback {
+  color: #2e7d32;
+}

@@ -21,12 +21,14 @@ function Chat({ socket, username, room }) {
       await socket.emit("send_message", messageData);
       setMessageList((list) => [...list, messageData]);
       setCurrentMessage("");
+      console.log(setMessageList);
     }
   };
   
   useEffect(() => {
     socket.on("receive_message", (data) => {
       setMessageList((list) => [...list, data]);
+      setIsTyping(false);
     });
   }, [socket]);
 
@@ -41,7 +43,7 @@ function Chat({ socket, username, room }) {
     socket.on("not_typing", (username) => {
       setTypingUsers((prevTypingUsers) =>
         prevTypingUsers.filter((user) => user !== username)
-      );
+      );    
       if (typingUsers.length === 0) {
         setIsTyping(false);
       }
@@ -74,7 +76,7 @@ function Chat({ socket, username, room }) {
         {/* ScrollToBottom */}
         <div className="message-container">
           <div className="feedback">
-            {isTyping && (
+          {isTyping && (
               <p>
                 {typingUsers.join(", ")}{" "}
                 {typingUsers.length === 1 ? "is" : "are"} typing now...
@@ -82,11 +84,12 @@ function Chat({ socket, username, room }) {
             )}
           </div>
           {messageList.map((messageContent) => {
-            return (
+            return (  
               <div
                 className="message"
                 id={username === messageContent.author ? "you" : "other"}
               >
+                         
                 <div>
                   <div className="message-content">
                     <p>{messageContent.message}</p>
@@ -95,8 +98,10 @@ function Chat({ socket, username, room }) {
                     <p id="time">{messageContent.time}</p>
                     <p id="author">{messageContent.author}</p>
                   </div>
+                  
                 </div>
               </div>
+              
             );
           })}
         </div>
